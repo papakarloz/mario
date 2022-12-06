@@ -12,7 +12,7 @@ mario_l = pygame.transform.flip(mario_r, True, False)
 mario = mario_r
 
 # fps ja kell
-fps = 60
+fps = 30
 kell = pygame.time.Clock()
 
 mario_x = 200
