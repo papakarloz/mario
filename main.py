@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 
 pygame.init()
 
@@ -64,8 +65,20 @@ for rida in range(len(ruudustik)):
             Ruut(veerg*32, rida*32, 16, ruudud, platvormid)
 
 
+#main muusika
+#muusikapala ise
+pygame.mixer.music.load("Sounds/mystery.mp3")
+#et lõputult mängiks
+pygame.mixer.music.play(-1)
 
+#muusika algne valjusus
+valjusus = 0.5
+pygame.mixer.music.set_volume(valjusus)
 
+#liugur et mängija saaks valjusust muuta
+manager = pygame_gui.UIManager([akna_laius, akna_korgus])
+liugur_music = pygame_gui.elements.UIHorizontalSlider(pygame.Rect((690, 615), (100, 20)),
+                                                      50, (0,100), manager)
 
 mario_r = pygame.transform.scale(pygame.image.load('mario.png'), (50, 43))
 mario_l = pygame.transform.flip(mario_r, True, False)
@@ -95,6 +108,13 @@ while mang_kaib:
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             mang_kaib = False
+            
+        elif e.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+            if e.ui_element == liugur_music:
+                pygame.mixer.music.set_volume(e.value/100)
+        
+        manager.process_events(e)
+            
         if e.type == pygame.KEYDOWN:
             # hyppamine
             if e.key == pygame.K_SPACE:
@@ -149,8 +169,11 @@ while mang_kaib:
 
     # ... aga igal juhul ka siia
     aken.blit(mario, asukoht)
+    
+    #muusika slideri jaoks vajalikud read
+    manager.update(dt)
+    manager.draw_ui(aken)
 
     pygame.display.update()
-
 
 pygame.quit()
