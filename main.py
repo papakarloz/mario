@@ -76,6 +76,12 @@ class Vampiir(pygame.sprite.Sprite):
         self.kiirus += self.kiirendus
         self.asukoht += self.kiirus + 0.5*self.kiirendus
 
+        if self.asukoht.x < 0:
+            self.asukoht.x = akna_laius
+        elif self.asukoht.x > akna_laius:
+            self.asukoht.x = 0
+
+
         self.rect.bottomleft = self.asukoht
     
     def hype(self):
@@ -85,13 +91,11 @@ class Vampiir(pygame.sprite.Sprite):
     def kontrolli_porkeid(self):
         porked_platvormidega = pygame.sprite.spritecollide(self, self.platvormid, False, pygame.sprite.collide_mask)
         if porked_platvormidega:
-            if self.kiirus.y > 0:
+            if self.kiirus.y > 1:
                 self.asukoht.y = porked_platvormidega[0].rect.top
                 self.kiirus.y = 0
 
 vampiirid = pygame.sprite.Group()
-
-
 
 ruudustik = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -134,8 +138,6 @@ for rida in range(len(ruudustik)):
             vampiirid.add(vampiir)
 
 
-
-
 #main muusika
 #muusikapala ise
 pygame.mixer.music.load("Sounds/mystery.mp3")
@@ -155,24 +157,9 @@ taust_pilt = pygame.transform.scale(pygame.image.load(f'img/taust.png'), (800, 6
 taust_rect = taust_pilt.get_rect()
 taust_rect.topleft = (0, 0)
 
-
-
-
 # fps ja kell
 fps = 30
 kell = pygame.time.Clock()
-
-mario_x = 200
-mario_y = 200
-
-hype = 100
-
-
-
-
-
-
-
 
 mang_kaib = True
 
@@ -181,8 +168,6 @@ while mang_kaib:
     dt = kell.tick(fps) / 1000
 
     aken.blit(taust_pilt, taust_rect)
-
-
 
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
@@ -203,44 +188,7 @@ while mang_kaib:
 
     vampiirid.update()
     vampiirid.draw(aken)
-
-
-    # mario_x += dt * kiirus_x
-
-    # # kui nupuvajutust ei ole, siis x kiirus vaheneb
-    # 
-
-    # asukoht = mario.get_rect(center=(mario_x, mario_y))
-
-    # aknast_valjas = False
- 
-    # # kontrollime, kas mario on ekraanist valja lennanud
-
-    # if asukoht[0] < 0:
-    #     asukoht.move_ip(akna_laius, 0)
-    #     aknast_valjas = True
-
-    # if asukoht[0] + mario.get_width() > akna_laius:
-    #     asukoht.move_ip(-akna_laius, 0)
-    #     aknast_valjas = True
-
-    # # gravitatsioon
-    # if asukoht[1] + mario.get_height() + 5 < akna_korgus and asukoht[1] + mario.get_height() > hype:
-    #     kiirus_y += gravitatsioon
-    #     mario_y += dt * kiirus_y
-    # else:
-    #     kiirus_y = 0
-
-    # # kui valjas ekraanist vasakult/paremalt siis joonistame mario siia...
-    # if aknast_valjas:
-    #     aken.blit(mario, asukoht)
-
-    # asukoht[0] = asukoht[0] % akna_laius
-    # mario_x = mario_x % akna_laius
-
-    # # ... aga igal juhul ka siia
-    # aken.blit(mario, asukoht)
-    
+   
     #muusika slideri jaoks vajalikud read
     manager.update(dt)
     manager.draw_ui(aken)
