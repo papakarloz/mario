@@ -20,8 +20,9 @@ class Ruut(pygame.sprite.Sprite):
     def __init__(self, x, y, pildi_nr, grupp, alamgrupp = ""):
         super().__init__()
         self.image = pygame.transform.scale(pygame.image.load(f'ruudud/ruut_{pildi_nr}.png'), (32, 32))
-        if pildi_nr in [5, 14, 15, 16]:
+        if pildi_nr in [2, 14, 15, 16]:
             alamgrupp.add(self)
+            self.mask = pygame.mask.from_surface(self.image)
 
         grupp.add(self)
 
@@ -46,13 +47,13 @@ class Vampiir(pygame.sprite.Sprite):
         self.kiirendus = vektor(0, 0)
 
         self.kiirus_x = 0
-        self.kiirus_y = 15
+        self.kiirus_y = 20
         self.kiirendus_x = 3
         self.inerts = 0.15
         self.gravitatsioon = 1.5
 
     def update(self):
-        
+        self.mask = pygame.mask.from_surface(self.image)
         self.liikumine()
         self.kontrolli_porkeid()
 
@@ -82,10 +83,11 @@ class Vampiir(pygame.sprite.Sprite):
             self.kiirus.y = -1*self.kiirus_y
 
     def kontrolli_porkeid(self):
-        porked_platvormidega = pygame.sprite.spritecollide(self, self.platvormid, False)
+        porked_platvormidega = pygame.sprite.spritecollide(self, self.platvormid, False, pygame.sprite.collide_mask)
         if porked_platvormidega:
-            self.asukoht.y = porked_platvormidega[0].rect.top
-            self.kiirus.y = 0
+            if self.kiirus.y > 0:
+                self.asukoht.y = porked_platvormidega[0].rect.top
+                self.kiirus.y = 0
 
 vampiirid = pygame.sprite.Group()
 
@@ -117,10 +119,10 @@ ruudustik = [
 # ruudustik platvormideks
 for rida in range(len(ruudustik)):
     for veerg in range(len(ruudustik[rida])):
-        if ruudustik[rida][veerg] == 2:
-            Ruut(veerg*32, rida*32, 2, ruudud)
-        elif ruudustik[rida][veerg] == 5:
-            Ruut(veerg*32, rida*32, 5, ruudud, platvormid)
+        if ruudustik[rida][veerg] == 5:
+            Ruut(veerg*32, rida*32, 5, ruudud)
+        elif ruudustik[rida][veerg] == 2:
+            Ruut(veerg*32, rida*32, 2, ruudud, platvormid)
         elif ruudustik[rida][veerg]  == 14:
             Ruut(veerg*32, rida*32, 14, ruudud, platvormid)
         elif ruudustik[rida][veerg]  == 15:
