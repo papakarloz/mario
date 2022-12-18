@@ -1,6 +1,9 @@
 import pygame
 import pygame_gui
 
+#vektorid
+vektor = pygame.math.Vector2
+
 pygame.init()
 
 # akna moodud - 800 x 640 ehk 25 x 20 tile'i
@@ -8,7 +11,7 @@ akna_laius = 800
 akna_korgus = 640
 
 aken = pygame.display.set_mode((akna_laius, akna_korgus))
-vamp_img_r = pygame.transform.scale(pygame.image.load('img/vampiir_0.png'), (60, 83))
+vamp_img_r = pygame.transform.scale(pygame.image.load('img/vampiir_0.png'), (40, 54))
 vamp_img_l = pygame.transform.flip(vamp_img_r, True, False)
 
 
@@ -30,32 +33,55 @@ platvormid = pygame.sprite.Group()
 
 class Vampiir(pygame.sprite.Sprite):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, platvormid):
         super().__init__()
         self.image = vamp_img_r
         self.rect = self.image.get_rect()
         self.rect.bottomleft = (x, y)
 
-        self.kiirus = 5
+        self.platvormid = platvormid
+
+        self.asukoht = vektor(x, y)
+        self.kiirus = vektor(0, 0)
+        self.kiirendus = vektor(0, 0)
+
+        self.kiirus_x = 0
+        self.kiirus_y = 5
+        self.kiirendus_x = 3
+        self.inerts = 0.15
+        self.gravitatsioon = 1.5
 
     def update(self):
+        
         self.liikumine()
         self.kontrolli_porkeid()
 
     def liikumine(self):
 
+        #kui klahvivajutusi pole, siis kiirendus.x = 0, kiirendus.y = gravitatsioon)
+        self.kiirendus = vektor(0, self.gravitatsioon)
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
-            self.rect.x -= self.kiirus
+            self.kiirendus.x = -1*self.kiirendus_x
             self.image = vamp_img_l
 
         elif keys[pygame.K_RIGHT]:
-            self.rect.x += self.kiirus
+            self.kiirendus.x = self.kiirendus_x
             self.image = vamp_img_r
 
+        self.kiirendus.x -= self.kiirus.x*self.inerts
+        self.kiirus += self.kiirendus
+        self.asukoht += self.kiirus + 0.5*self.kiirendus
+
+        self.rect.bottomleft = self.asukoht
+
     def kontrolli_porkeid(self):
-        pass
+        porked_platvormidega = pygame.sprite.spritecollide(self, self.platvormid, False)
+        if porked_platvormidega:
+            self.asukoht.y = porked_platvormidega[0].rect.top
+            self.kiirus.y = 0
 
 vampiirid = pygame.sprite.Group()
 
@@ -98,7 +124,7 @@ for rida in range(len(ruudustik)):
         elif ruudustik[rida][veerg]  == 16:
             Ruut(veerg*32, rida*32, 16, ruudud, platvormid)
         elif ruudustik[rida][veerg] == 100:
-            vampiir = Vampiir(veerg*32, rida*32+32)
+            vampiir = Vampiir(veerg*32, rida*32+32, platvormid)
             vampiirid.add(vampiir)
 
 
@@ -132,11 +158,7 @@ kell = pygame.time.Clock()
 
 mario_x = 200
 mario_y = 200
-kiirus_x = 0
-kiirus_y = 5
-kiirendus_x = 20
-inerts = 0.9
-gravitatsioon = 15
+
 hype = 100
 
 
@@ -180,7 +202,7 @@ while mang_kaib:
     # mario_x += dt * kiirus_x
 
     # # kui nupuvajutust ei ole, siis x kiirus vaheneb
-    # kiirus_x *= inerts
+    # 
 
     # asukoht = mario.get_rect(center=(mario_x, mario_y))
 
