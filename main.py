@@ -46,7 +46,7 @@ class Vampiir(pygame.sprite.Sprite):
         self.kiirendus = vektor(0, 0)
 
         self.kiirus_x = 0
-        self.kiirus_y = 5
+        self.kiirus_y = 15
         self.kiirendus_x = 3
         self.inerts = 0.15
         self.gravitatsioon = 1.5
@@ -76,6 +76,10 @@ class Vampiir(pygame.sprite.Sprite):
         self.asukoht += self.kiirus + 0.5*self.kiirendus
 
         self.rect.bottomleft = self.asukoht
+    
+    def hype(self):
+        if pygame.sprite.spritecollide(self, self.platvormid, False):
+            self.kiirus.y = -1*self.kiirus_y
 
     def kontrolli_porkeid(self):
         porked_platvormidega = pygame.sprite.spritecollide(self, self.platvormid, False)
@@ -191,8 +195,8 @@ while mang_kaib:
         if e.type == pygame.KEYDOWN:
             # hyppamine
             if e.key == pygame.K_SPACE:
-                if mario_y > 2 * hype:
-                    mario_y -= hype
+                vampiir.hype()
+
     ruudud.draw(aken)
 
     vampiirid.update()
