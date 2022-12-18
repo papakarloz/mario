@@ -97,6 +97,42 @@ inerts = 0.9
 gravitatsioon = 15
 hype = 100
 
+
+class Vampiir(pygame.sprite.Sprite):
+
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = mario
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+        self.kiirus = 5
+
+    def update(self):
+        self.liikumine()
+        self.kontrolli_porkeid()
+
+    def liikumine(self):
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.kiirus
+            self.image = mario_l
+
+        elif keys[pygame.K_RIGHT]:
+            self.rect.x += self.kiirus
+            self.image = mario_r
+
+    def kontrolli_porkeid(self):
+        pass
+
+vampiirid = pygame.sprite.Group()
+vampiir = Vampiir(akna_laius/2, akna_korgus/2)
+vampiirid.add(vampiir)
+
+
+
 mang_kaib = True
 
 while mang_kaib:
@@ -104,6 +140,9 @@ while mang_kaib:
     dt = kell.tick(fps) / 1000
 
     aken.fill((255, 255, 255))
+
+    vampiirid.update()
+    vampiirid.draw(aken)
 
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
@@ -122,17 +161,7 @@ while mang_kaib:
                     mario_y -= hype
     ruudud.draw(aken)
 
-    keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_LEFT]:
-        kiirus_x -= kiirendus_x
-    elif keys[pygame.K_RIGHT]:
-        kiirus_x += kiirendus_x
-
-    if kiirus_x > 0:
-        mario = mario_r
-    else:
-        mario = mario_l
 
     mario_x += dt * kiirus_x
 
