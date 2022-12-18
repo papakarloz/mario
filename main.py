@@ -80,9 +80,13 @@ manager = pygame_gui.UIManager([akna_laius, akna_korgus])
 liugur_music = pygame_gui.elements.UIHorizontalSlider(pygame.Rect((690, 615), (100, 20)),
                                                       50, (0,100), manager)
 
-mario_r = pygame.transform.scale(pygame.image.load('mario.png'), (50, 43))
-mario_l = pygame.transform.flip(mario_r, True, False)
-mario = mario_r
+taust_pilt = pygame.transform.scale(pygame.image.load(f'img/taust.png'), (800, 640))
+taust_rect = taust_pilt.get_rect()
+taust_rect.topleft = (0, 0)
+
+
+vamp_img_r = pygame.transform.scale(pygame.image.load('img/vampiir_0.png'), (60, 83))
+vamp_img_l = pygame.transform.flip(vamp_img_r, True, False)
 
 # fps ja kell
 fps = 30
@@ -102,7 +106,7 @@ class Vampiir(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         super().__init__()
-        self.image = mario
+        self.image = vamp_img_r
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
@@ -118,11 +122,11 @@ class Vampiir(pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.kiirus
-            self.image = mario_l
+            self.image = vamp_img_l
 
         elif keys[pygame.K_RIGHT]:
             self.rect.x += self.kiirus
-            self.image = mario_r
+            self.image = vamp_img_r
 
     def kontrolli_porkeid(self):
         pass
@@ -139,7 +143,7 @@ while mang_kaib:
 
     dt = kell.tick(fps) / 1000
 
-    aken.fill((255, 255, 255))
+    aken.blit(taust_pilt, taust_rect)
 
     vampiirid.update()
     vampiirid.draw(aken)
@@ -165,39 +169,39 @@ while mang_kaib:
 
     mario_x += dt * kiirus_x
 
-    # kui nupuvajutust ei ole, siis x kiirus vaheneb
-    kiirus_x *= inerts
+    # # kui nupuvajutust ei ole, siis x kiirus vaheneb
+    # kiirus_x *= inerts
 
-    asukoht = mario.get_rect(center=(mario_x, mario_y))
+    # asukoht = mario.get_rect(center=(mario_x, mario_y))
 
-    aknast_valjas = False
+    # aknast_valjas = False
  
-    # kontrollime, kas mario on ekraanist valja lennanud
+    # # kontrollime, kas mario on ekraanist valja lennanud
 
-    if asukoht[0] < 0:
-        asukoht.move_ip(akna_laius, 0)
-        aknast_valjas = True
+    # if asukoht[0] < 0:
+    #     asukoht.move_ip(akna_laius, 0)
+    #     aknast_valjas = True
 
-    if asukoht[0] + mario.get_width() > akna_laius:
-        asukoht.move_ip(-akna_laius, 0)
-        aknast_valjas = True
+    # if asukoht[0] + mario.get_width() > akna_laius:
+    #     asukoht.move_ip(-akna_laius, 0)
+    #     aknast_valjas = True
 
-    # gravitatsioon
-    if asukoht[1] + mario.get_height() + 5 < akna_korgus and asukoht[1] + mario.get_height() > hype:
-        kiirus_y += gravitatsioon
-        mario_y += dt * kiirus_y
-    else:
-        kiirus_y = 0
+    # # gravitatsioon
+    # if asukoht[1] + mario.get_height() + 5 < akna_korgus and asukoht[1] + mario.get_height() > hype:
+    #     kiirus_y += gravitatsioon
+    #     mario_y += dt * kiirus_y
+    # else:
+    #     kiirus_y = 0
 
-    # kui valjas ekraanist vasakult/paremalt siis joonistame mario siia...
-    if aknast_valjas:
-        aken.blit(mario, asukoht)
+    # # kui valjas ekraanist vasakult/paremalt siis joonistame mario siia...
+    # if aknast_valjas:
+    #     aken.blit(mario, asukoht)
 
-    asukoht[0] = asukoht[0] % akna_laius
-    mario_x = mario_x % akna_laius
+    # asukoht[0] = asukoht[0] % akna_laius
+    # mario_x = mario_x % akna_laius
 
-    # ... aga igal juhul ka siia
-    aken.blit(mario, asukoht)
+    # # ... aga igal juhul ka siia
+    # aken.blit(mario, asukoht)
     
     #muusika slideri jaoks vajalikud read
     manager.update(dt)
